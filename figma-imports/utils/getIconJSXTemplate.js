@@ -1,4 +1,4 @@
-const getGenFileCaption = require('./getGenFileCaption');
+const getGenFileCaption = require("./getGenFileCaption");
 
 /**
  * get icon component template
@@ -9,15 +9,17 @@ module.exports = (name) => `
 ${getGenFileCaption()}
 import React from 'react';
 
-import {ReactComponent as ${name}Component} from './${name}.svg';
+import {ReactComponent as ${name.substring(
+  2
+)}Component} from './${name.substring(2)}.svg';
 
 import Icon from '../Icon';
 
-export const ${name} = (props) => (
+export const ${name.substring(2)} = (props) => (
   <Icon {...props}>
-    <${name}Component/>
+    <${name.substring(2)}Component/>
   </Icon>
 );
 
-${name}.propTypes = Icon.propTypes;
+${name.substring(2)}.propTypes = Icon.propTypes;
 `;

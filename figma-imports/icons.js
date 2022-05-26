@@ -1,12 +1,12 @@
-const path = require('path');
-const fs = require('fs');
-const {exec} = require('child_process');
-const {pascalCase} = require('change-case');
-const Promise = require('bluebird');
+const path = require("path");
+const fs = require("fs");
+const { exec } = require("child_process");
+const { pascalCase } = require("change-case");
+const Promise = require("bluebird");
 
-const {api, getIconJSXTemplate, svgo} = require('./utils');
+const { api, getIconJSXTemplate, svgo } = require("./utils");
 
-const IconsDir = path.resolve(__dirname, '../src/components/Icons');
+const IconsDir = path.resolve(__dirname, "../src/components/Icons");
 
 const getIconFolderPath = (name) => path.resolve(IconsDir, pascalCase(name));
 
@@ -30,21 +30,36 @@ const clearIconsDir = () => {
 const generateIcon = async (iconNode) => {
   const iconUrl = await api.getSvgImageUrl(iconNode.id);
 
-  const iconName = pascalCase(iconNode.name);
+  const iconNameNative = pascalCase(iconNode.name);
+
+  // restructure the icon name to make the size at the end of string.
+  // e.g. 24AlertErrorFilled -> AlertErrorFilled24
+  const iconName = iconNameNative.substring(2) + iconNameNative.substring(0, 2);
+
+  console.log("generating iconName……", iconName);
+
   const iconFolderPath = getIconFolderPath(iconName);
 
   if (!fs.existsSync(iconFolderPath)) {
     fs.mkdirSync(iconFolderPath);
   }
 
-  const {data: iconContent} = await api.getImageContent(iconUrl);
-  const {data: optimizedIconContent} = await svgo.optimize(iconContent);
+  const { data: iconContent } = await api.getImageContent(iconUrl);
+  const { data: optimizedIconContent } = await svgo.optimize(iconContent);
 
   const iconJSXTemplate = getIconJSXTemplate(iconName);
 
   await Promise.all([
-    writeFile(path.resolve(iconFolderPath, `${iconName}.svg`), optimizedIconContent, {encoding: 'utf8'}),
-    writeFile(path.resolve(iconFolderPath, `${iconName}.jsx`), iconJSXTemplate, {encoding: 'utf8'})
+    writeFile(
+      path.resolve(iconFolderPath, `${iconName}.svg`),
+      optimizedIconContent,
+      { encoding: "utf8" }
+    ),
+    writeFile(
+      path.resolve(iconFolderPath, `${iconName}.jsx`),
+      iconJSXTemplate,
+      { encoding: "utf8" }
+    ),
   ]);
 
   console.log(`${iconName} was written success!`);
@@ -68,17 +83,17 @@ const generateIcons = async (iconNodesArr) => {
  * @param iconNodesArr - array of icon nodes from frame
  */
 const generateImports = (iconNodesArr) => {
-  const fileWithImportsPath = path.resolve(IconsDir, 'index.js');
+  const fileWithImportsPath = path.resolve(IconsDir, "index.js");
 
   const importsContent = iconNodesArr
-    .map(iconNode => {
+    .map((iconNode) => {
       const iconName = pascalCase(iconNode.name);
 
       return `export * from './${iconName}/${iconName}';`;
     })
-    .join('\n');
+    .join("\n");
 
-  fs.writeFileSync(fileWithImportsPath, importsContent, {encoding: 'utf8'});
+  fs.writeFileSync(fileWithImportsPath, importsContent, { encoding: "utf8" });
 
   console.log(`imports was written success!`);
 };
@@ -86,12 +101,14 @@ const generateImports = (iconNodesArr) => {
 const main = async () => {
   clearIconsDir();
 
-  const iconNodesArr = await api.getNodeChildren(process.env.FRAME_WITH_ICONS_ID);
+  const iconNodesArr = await api.getNodeChildren(
+    process.env.FRAME_WITH_ICONS_ID
+  );
 
   await Promise.all([
     generateIcons(iconNodesArr),
-    generateImports(iconNodesArr)
-  ])
+    generateImports(iconNodesArr),
+  ]);
 };
 
 module.exports = main;
