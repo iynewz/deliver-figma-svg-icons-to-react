@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
+import * as icons24 from "./components/Icons24/Index";
+import * as icons14 from "./components/Icons14/Index";
 
-import * as icons from './components/Icons';
-
-import './App.css';
+import "./App.css";
 
 /**
  * Show all imported icons in different si
@@ -12,21 +12,16 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <h1>
-        Hot to automate delivery SVG icons from Figma to React using Figma API
-      </h1>
-
+      <h1>24</h1>
       <div className="all-you-imported-icons">
-        {Object.values(icons).map((IconComponent) => (
+        {Object.values(icons24).map((IconComponent) => (
           <IconComponent color="light" size="100" key={IconComponent.name} />
         ))}
-
-        {Object.values(icons).map((IconComponent) => (
-          <IconComponent color="dark" size="200" key={IconComponent.name} />
-        ))}
-
-        {Object.values(icons).map((IconComponent) => (
-          <IconComponent color="accent" size="300" key={IconComponent.name} />
+      </div>
+      <h1>14</h1>
+      <div className="all-you-imported-icons">
+        {Object.values(icons14).map((IconComponent) => (
+          <IconComponent color="light" size="100" key={IconComponent.name} />
         ))}
       </div>
     </div>

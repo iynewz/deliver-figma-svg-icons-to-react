@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-console.log("process.env", process.env);
-
 const importIcons = require("./icons");
 
 const main = async () => {
